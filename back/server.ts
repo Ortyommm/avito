@@ -36,8 +36,20 @@ const fastify = Fastify({
 await fastify.register(fastifyEnv, options);
 const apiKey = fastify.config.DEEPSEEK_API_KEY;
 
+const ALLOWED_ORIGINS = new Set([
+  'http://localhost:5173',
+  'http://avito.artemdev.com',
+  'https://avito.artemdev.com',
+]);
+
 await fastify.register(cors, {
-    origin: 'http://localhost:5173', // Разрешаем только ваш фронтенд
+    origin: (origin, cb) => {
+      if (!origin || ALLOWED_ORIGINS.has(origin)) {
+        cb(null, true);
+        return;
+      }
+      cb(new Error('Not allowed by CORS'), false);
+    },
     methods: ['GET', 'PUT', 'POST', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
 });
@@ -49,11 +61,6 @@ fastify.use((_, __, next) =>
   new Promise(res => setTimeout(res, 300 + Math.random() * 700)).then(next),
 );
 
-// Настройка CORS
-fastify.use((_, reply, next) => {
-  reply.setHeader('Access-Control-Allow-Origin', '*');
-  next();
-});
 
 interface ItemGetRequest extends Fastify.RequestGenericInterface {
   Params: {
@@ -283,7 +290,11 @@ fastify.get<SummaryRequest>('/items/:id/streaming-summary', async (request, repl
     reply.raw.setHeader('Content-Type', 'text/event-stream');
     reply.raw.setHeader('Cache-Control', 'no-cache');
     reply.raw.setHeader('Connection', 'keep-alive');
-    reply.raw.setHeader('Access-Control-Allow-Origin', 'http://localhost:5173');
+    const requestOrigin = request.headers.origin;
+    const sseOrigin = requestOrigin && ALLOWED_ORIGINS.has(requestOrigin)
+      ? requestOrigin
+      : 'https://avito.artemdev.com';
+    reply.raw.setHeader('Access-Control-Allow-Origin', sseOrigin);
 
 
     // Если ключа нет

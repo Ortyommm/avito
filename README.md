@@ -15,6 +15,12 @@ DEEPSEEK_API_KEY=<ключ>
 ### Через Docker
 Из корня проекта:
 
+Перед запуском (локальным) создайте файл `front/.env`:
+
+```dotenv
+VITE_API_URL=http://localhost:8080
+```
+
 ```bash
 docker compose up --build
 ```
@@ -27,6 +33,12 @@ docker compose up --build
 
 ### Без Docker (локально)
 Нужно два терминала: один для `back`, второй для `front`.
+
+Перед запуском фронтенда создайте файл `front/.env`:
+
+```dotenv
+VITE_API_URL=http://localhost:8080
+```
 
 1) Backend:
    (В backend у меня не работал быстро npm, поэтому я использовал yarn)

@@ -20,8 +20,8 @@ services:
     container_name: avito-front
     depends_on:
       - back
-    environment:
-      VITE_API_URL: "http://localhost:8080"
+    env_file:
+      - ./front/.env
     ports:
       - "5173:5173"
     restart: unless-stopped
