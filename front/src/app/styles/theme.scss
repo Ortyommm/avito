@@ -1,0 +1,11 @@
+:root[data-theme='light'] {
+  --app-bg: #ffffff;
+  --app-text: #000000;
+  --accent-color: #1890ff;
+}
+
+:root[data-theme='dark'] {
+  --app-bg: #141414; /* Цвет фона в стиле Antd Dark */
+  --app-text: rgba(255, 255, 255, 0.85);
+  --accent-color: #177ddc;
+}

@@ -1,0 +1,27 @@
+services:
+  back:
+    build:
+      context: ./back
+      dockerfile: Dockerfile
+    container_name: avito-back
+    env_file:
+      - ./back/.env
+    environment:
+      PORT: "8080"
+      port: "8080"
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+
+  front:
+    build:
+      context: ./front
+      dockerfile: Dockerfile
+    container_name: avito-front
+    depends_on:
+      - back
+    environment:
+      VITE_API_URL: "http://localhost:8080"
+    ports:
+      - "5173:5173"
+    restart: unless-stopped
