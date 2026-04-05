@@ -22,12 +22,14 @@ import { CategorySpecificFields } from '@/widgets/ad-form/ui'
 import { MarketPriceButton } from '@/features/estimate-price/ui/MarketPriceButton.tsx'
 import { SmartDescriptionButton } from '@/features/generate-description'
 import { useFormDraft } from '@/widgets/ad-form'
+import { useNavigate } from 'react-router-dom'
 
 export const AdForm = ({ id }: { id: number }) => {
   const [form] = Form.useForm()
   const { data: ad, isLoading, isError } = useAdDetails(+id)
   const { mutate: updateAd, isPending: isUpdating } = useUpdateAd()
   const { handleValuesChange, clearDraft } = useFormDraft(+id, form)
+  const navigate = useNavigate()
 
   useErrorNotification(
     isError,
@@ -44,6 +46,7 @@ export const AdForm = ({ id }: { id: number }) => {
         onSuccess: () => {
           message.success('Сохранено')
           clearDraft()
+          navigate(`/ads/${id}`)
         },
         onError: () => {
           message.error('Произошла ошибка')
